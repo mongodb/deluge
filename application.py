@@ -4,10 +4,12 @@ import logging
 import os
 import sys
 import urllib.parse
+from typing import Callable, Union
 
 import pymongo
 import werkzeug.serving
 from werkzeug.wrappers import Request, Response
+from werkzeug.exceptions import HTTPException, BadRequest, MethodNotAllowed
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +34,7 @@ class Connection:
     def vote(self,
              page: str,
              useful: bool,
-             reason: str):
+             reason: str) -> None:
         """Record a vote for the given page path."""
         self.votes.save({'page': page,
                          'useful': useful,
@@ -48,10 +50,10 @@ class Deluge:
         self.connection = Connection(host, 5*1024*1024*1024)
 
     @Request.application
-    def application(self, request: Request) -> Response:
+    def application(self, request: Request) -> Union[Response, HTTPException]:
         """The Werkzeug WSGI request handler."""
         if request.method != 'GET':
-            return werkzeug.exceptions.MethodNotAllowed(valid_methods=('GET',))
+            return MethodNotAllowed(valid_methods=('GET',))
 
         try:
             parameters = urllib.parse.parse_qs(str(request.query_string, 'utf-8'))
@@ -59,13 +61,13 @@ class Deluge:
             useful = bool(int(parameters['v'][0]) > 0)
             reason = parameters.get('r', [''])[0]
         except (KeyError, ValueError):
-            return werkzeug.exceptions.BadRequest()
+            return BadRequest()
 
         self.connection.vote(page, useful, reason)
         return Response(EMPTY_BMP, content_type='image/bmp')
 
     @classmethod
-    def run(cls) -> 'Deluge':
+    def run(cls) -> Callable[[Request], Union[Response, HTTPException]]:
         """Create a Deluge instance and return the associated WSGI application
            using environment variables for configuration. Intended as an
            application entry point."""

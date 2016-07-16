@@ -6,4 +6,4 @@ deluge.zip: application.py requirements.txt .ebextensions/*
 
 lint:
 	pep8 --max-line-length=100 ./application.py
-	mypy -s ./application.py
+	MYPYPATH=stubs mypy --check-untyped-defs --strict-optional ./application.py
