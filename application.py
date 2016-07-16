@@ -11,6 +11,9 @@ from werkzeug.wrappers import Request, Response
 
 logger = logging.getLogger(__name__)
 
+EMPTY_BMP = b'BM\x1e\x00\x00\x00\x00\x00\x00\x00\x1a\x00\x00\x00\x0c\x00' \
+            b'\x00\x00\x01\x00\x01\x00\x01\x00\x18\x00\x00\x00\xff\x00'
+
 
 class Connection:
     """A database backend connection"""
@@ -47,19 +50,19 @@ class Deluge:
     @Request.application
     def application(self, request: Request) -> Response:
         """The Werkzeug WSGI request handler."""
-        if request.method != 'POST':
-            return werkzeug.exceptions.MethodNotAllowed(valid_methods=('POST',))
+        if request.method != 'GET':
+            return werkzeug.exceptions.MethodNotAllowed(valid_methods=('GET',))
 
         try:
             parameters = urllib.parse.parse_qs(str(request.query_string, 'utf-8'))
             page = parameters['p'][0]
-            useful = bool(int(parameters['v'][0]))
+            useful = bool(int(parameters['v'][0]) > 0)
             reason = parameters.get('r', [''])[0]
         except KeyError:
             return werkzeug.exceptions.BadRequest()
 
         self.connection.vote(page, useful, reason)
-        return Response('')
+        return Response(EMPTY_BMP, content_type='image/bmp')
 
     @classmethod
     def run(cls) -> 'Deluge':
