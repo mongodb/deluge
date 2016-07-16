@@ -58,7 +58,7 @@ class Deluge:
             page = parameters['p'][0]
             useful = bool(int(parameters['v'][0]) > 0)
             reason = parameters.get('r', [''])[0]
-        except KeyError:
+        except (KeyError, ValueError):
             return werkzeug.exceptions.BadRequest()
 
         self.connection.vote(page, useful, reason)
