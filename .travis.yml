@@ -1,0 +1,7 @@
+language: python
+python:
+  - "3.4"
+install:
+  - pip install --user -r requirements.txt mypy-lang pep8
+script: make lint
+sudo: false
