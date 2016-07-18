@@ -44,7 +44,8 @@ class Connection:
 
 class Deluge:
     """An HTTP frontent to Deluge."""
-    MAX_REQUESTS_PER_INTERVAL = 5
+    MAX_PAGE_LEN = 255
+    MAX_REASON_LEN = 1024
 
     def __init__(self, host: str) -> None:
         self.connection = Connection(host, 5*1024*1024*1024)
@@ -60,9 +61,9 @@ class Deluge:
 
         try:
             parameters = urllib.parse.parse_qs(str(request.query_string, 'utf-8'))
-            page = parameters['p'][0]
+            page = parameters['p'][0][:self.MAX_PAGE_LEN]
             useful = bool(int(parameters['v'][0]) > 0)
-            reason = parameters.get('r', [''])[0]
+            reason = parameters.get('r', [''])[0][:self.MAX_REASON_LEN]
         except (KeyError, ValueError):
             return BadRequest()
 

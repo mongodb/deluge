@@ -1,7 +1,7 @@
 .PHONY: lint
 
 deluge.zip: application.py requirements.txt .ebextensions/*
-	rm $@
+	rm $@ || true
 	zip -r $@ .ebextensions application.py requirements.txt
 
 lint:
