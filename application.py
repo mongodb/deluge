@@ -55,6 +55,9 @@ class Deluge:
         if request.method != 'GET':
             return MethodNotAllowed(valid_methods=('GET',))
 
+        if request.path == '/health':
+            return Response('')
+
         try:
             parameters = urllib.parse.parse_qs(str(request.query_string, 'utf-8'))
             page = parameters['p'][0]

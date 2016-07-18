@@ -7,6 +7,9 @@ class Request:
     def method(self) -> str: ...
 
     @property
+    def path(self) -> str: ...
+
+    @property
     def query_string(self) -> bytes: ...
 
     @staticmethod
