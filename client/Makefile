@@ -9,7 +9,7 @@ FLOW=./node_modules/.bin/flow
 	$(FLOW)
 	./node_modules/.bin/rollup -c -o $@
 
-lint:
+lint: node_modules
 	$(FLOW)
 
 node_modules: package.json
