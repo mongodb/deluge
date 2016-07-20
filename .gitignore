@@ -89,3 +89,4 @@ ENV/
 .ropeproject
 
 /deluge.zip
+node_modules/
