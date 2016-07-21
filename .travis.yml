@@ -4,7 +4,6 @@ python:
   - "3.4"
 install:
   - pip install -U -r server/requirements.txt mypy-lang pep8
-  - npm install -g flow-bin
-script: make lint
+script: make -C server lint
 notifications:
     email: false
