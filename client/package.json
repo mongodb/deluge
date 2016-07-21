@@ -9,6 +9,6 @@
     "babel-preset-es2015-rollup": "^1.1.1",
     "rollup": "^0.34.1",
     "rollup-plugin-babel": "^2.6.1",
-    "uglify-js": "https://github.com/mishoo/UglifyJS2.git#8ad8d7b7177454fb9d430d4da31b01825ca4eff8",
+    "uglify-js": "https://github.com/mishoo/UglifyJS2.git#8ad8d7b7177454fb9d430d4da31b01825ca4eff8"
   }
 }

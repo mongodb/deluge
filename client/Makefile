@@ -8,7 +8,7 @@
 	./node_modules/.bin/rollup -c -o $@
 
 lint:
-	flow
+	flow check
 
 node_modules: package.json
 	npm update
