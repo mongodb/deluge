@@ -1,16 +1,14 @@
-FLOW=./node_modules/.bin/flow
-
 .PHONY: clean lint
 
 ../build/bundle.min.js: ../build/bundle.js
 	./node_modules/.bin/uglifyjs -cm -o $@ $^
 
 ../build/bundle.js: src/*.js node_modules
-	$(FLOW)
+	flow
 	./node_modules/.bin/rollup -c -o $@
 
-lint: node_modules
-	$(FLOW)
+lint:
+	flow
 
 node_modules: package.json
 	npm update
