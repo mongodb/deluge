@@ -5,9 +5,10 @@ const FEEDBACK_URL = 'http://deluge.us-east-1.elasticbeanstalk.com/'
 function addQueryParameters(url: string, parameters: Map<string, string|boolean>): string {
     const queryComponents = []
 
-    for(let [key, value] of parameters.entries()) {
+    parameters.forEach((value, key) => {
         queryComponents.push(`${encodeURIComponent(key)}=${encodeURIComponent(JSON.stringify(value))}`)
-    }
+    })
+
     return url + '?' + queryComponents.join('&')
 }
 
@@ -158,12 +159,12 @@ class Deluge {
             questionListElement.appendChild(listElement)
         }
 
-        for(let question of this.questions) {
+        this.questions.forEach((question) => {
             question.clear()
             const listElement = document.createElement('li')
             listElement.appendChild(question.draw())
             questionListElement.appendChild(listElement)
-        }
+        })
 
         const buttonGroup = document.createElement('div')
         buttonGroup.className = 'button-group'
@@ -183,11 +184,11 @@ class Deluge {
         buttonGroup.appendChild(submitButtonElement)
         submitButtonElement.onclick = () => {
             const answers = new Map()
-            for(let question of this.questions) {
+            this.questions.forEach((question) => {
                 if(question.answer != null) {
                     answers.set(question.name, question.answer)
                 }
-            }
+            })
 
             this.sendRating(state.vote, answers).then(() => {
                 const ratedDate = (new Date()).toISOString()
