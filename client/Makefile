@@ -8,7 +8,7 @@
 	./node_modules/.bin/rollup -c -o $@
 
 lint:
-	flow check --verbose || echo $?
+	flow check --verbose 2>&1 | tail -n 30 || echo $$?
 
 node_modules: package.json
 	npm update
