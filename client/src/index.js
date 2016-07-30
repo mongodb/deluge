@@ -2,7 +2,7 @@
 
 const FEEDBACK_URL = 'http://deluge.us-east-1.elasticbeanstalk.com/'
 
-function addQueryParameters(url: string, parameters: Map<string, string|boolean>): string {
+function addQueryParameters(url: string, parameters: Map<string, string|number|boolean>): string {
     const queryComponents = []
 
     parameters.forEach((value, key) => {
@@ -95,6 +95,66 @@ class BinaryQuestion {
     }
 }
 
+class RangeQuestion {
+    name: string
+    promptHtml: string
+    answer: ?number
+    selectedIndex: ?number
+
+    constructor(name: string, promptHtml: string) {
+        this.name = name
+        this.promptHtml = promptHtml
+        this.answer = null
+        this.selectedIndex = null
+    }
+
+    clear(): void {
+        this.answer = null
+        this.selectedIndex = null
+    }
+
+    draw(): HTMLElement {
+        const element = document.createElement('div')
+        const promptElement = document.createElement('div')
+        element.appendChild(promptElement)
+
+        promptElement.innerHTML = this.promptHtml
+
+        const starElements = []
+        for(let i = 0; i < RangeQuestion.numberOfOptions(); i += 1) {
+            const starElement = document.createElement('span')
+
+            starElement.onclick = () => {
+                this.answer = i / RangeQuestion.numberOfOptions()
+                this.selectedIndex = i
+                this.updateView(starElements)
+            }
+
+            element.appendChild(starElement)
+            starElements.push(starElement)
+        }
+
+        this.updateView(starElements)
+
+        return element
+    }
+
+    updateView(starElements: HTMLElement[]): void {
+        for(let i = 0; i < starElements.length; i += 1) {
+            const starElement = starElements[i]
+
+            starElement.className = 'rangestar fa'
+            if(this.selectedIndex == null || i > this.selectedIndex) {
+                starElement.className += ' fa-star-o'
+            } else {
+                starElement.className += ' fa-star selected'
+            }
+        }
+    }
+
+    static numberOfOptions() { return 4 }
+}
+
 class Deluge {
     project: string
     path: string
@@ -161,6 +221,7 @@ class Deluge {
 
         this.questions.forEach((question) => {
             question.clear()
+
             const listElement = document.createElement('li')
             listElement.appendChild(question.draw())
             questionListElement.appendChild(listElement)
@@ -215,6 +276,13 @@ class Deluge {
         return this
     }
 
+    askRangeQuestion(name: string, html: string): Deluge {
+        const question = new RangeQuestion(name, html)
+        this.questions.push(question)
+
+        return this
+    }
+
     askFreeformQuestion(name: string, caption: string): Deluge {
         const question = new FreeformQuestion(name, caption)
         this.questions.push(question)
@@ -222,7 +290,7 @@ class Deluge {
         return this
     }
 
-    sendRating(vote: boolean, fields: Map<string, string|boolean>): Promise<void> {
+    sendRating(vote: boolean, fields: Map<string, string|number|boolean>): Promise<void> {
         return new Promise((resolve, reject) => {
             fields.set('v', vote)
             fields.set('p', `${this.project}/${this.path}`)
