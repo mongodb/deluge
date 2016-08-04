@@ -123,7 +123,6 @@ class RangeQuestion {
 
             starElement.onclick = () => {
                 this.answer = i + 1
-                console.log(this.answer)
                 this.updateView(starElements)
             }
 
