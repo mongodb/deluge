@@ -152,7 +152,7 @@ class RangeQuestion {
         }
     }
 
-    static numberOfOptions() { return 4 }
+    static numberOfOptions() { return 5 }
 }
 
 class Deluge {
