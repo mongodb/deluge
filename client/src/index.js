@@ -99,18 +99,15 @@ class RangeQuestion {
     name: string
     promptHtml: string
     answer: ?number
-    selectedIndex: ?number
 
     constructor(name: string, promptHtml: string) {
         this.name = name
         this.promptHtml = promptHtml
         this.answer = null
-        this.selectedIndex = null
     }
 
     clear(): void {
         this.answer = null
-        this.selectedIndex = null
     }
 
     draw(): HTMLElement {
@@ -125,8 +122,8 @@ class RangeQuestion {
             const starElement = document.createElement('span')
 
             starElement.onclick = () => {
-                this.answer = i / RangeQuestion.numberOfOptions()
-                this.selectedIndex = i
+                this.answer = i + 1
+                console.log(this.answer)
                 this.updateView(starElements)
             }
 
@@ -144,7 +141,7 @@ class RangeQuestion {
             const starElement = starElements[i]
 
             starElement.className = 'rangestar fa'
-            if(this.selectedIndex == null || i > this.selectedIndex) {
+            if(this.answer == null || i >= this.answer) {
                 starElement.className += ' fa-star-o'
             } else {
                 starElement.className += ' fa-star selected'
