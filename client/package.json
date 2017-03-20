@@ -2,7 +2,7 @@
   "author": "Andrew Aldridge",
   "files": [ "../README.md", "src/lib.js" ],
   "main": "src/lib.js",
-  "name": "deluge",
+  "name": "rigning",
   "repository": { "type": "git", "url": "git://github.com/mongodb/deluge.git" },
   "version": "2.1.0",
 
