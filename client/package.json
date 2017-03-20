@@ -1,6 +1,10 @@
 {
+  "author": "Andrew Aldridge",
+  "files": [ "../README.md", "src/lib.js" ],
+  "main": "src/lib.js",
   "name": "deluge",
-  "version": "1.4.0",
+  "repository": { "type": "git", "url": "git://github.com/mongodb/deluge.git" },
+  "version": "1.5.0",
 
   "greniConfig": {
     "entryPoints": {"index.js": "src/index.js"},
