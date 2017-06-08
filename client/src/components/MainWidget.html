@@ -1,0 +1,150 @@
+<div class="{{ delugeClass }}">
+    <div class="{{ delugeHeaderClass }}" on:click='toggle()'>
+    {{ #if state === 'Initial' }}
+        <span class="fa fa-comments deluge-comment-icon"></span>
+    {{ /if }}
+
+        <span class="deluge-helpful">Was this page helpful?</span>
+
+    {{ #if state !== 'Initial' }}
+        <span class="fa fa-angle-down deluge-close-icon"></span>
+    {{ /if }}
+    </div>
+
+    <div class="{{ delugeBodyClass }}">
+    {{ #if state === 'Voted' }}
+        <p>Thank you for your feedback!</p>
+    {{ elseif state == 'Pending '}}
+        <p>Submitting feedback...</p>
+    {{ elseif state === 'NotVoted' }}
+        <a on:click="rate(true)" class="deluge-vote-button">Yes</a>
+        <a on:click="rate(false)" class="deluge-vote-button">No</a>
+    {{ elseif typeof state === 'boolean' }}
+        <div class="deluge-questions">
+            <ul ref>
+            {{ #if state === false }}
+                <li>We're sorry! Please help us improve this page.</li>
+            {{ /if }}
+            {{ #each questions as question }}
+                <li>
+                {{ #if question.type === 'binary' }}
+                    <BinaryQuestion name="{{ question.name }}" caption="{{ question.caption }}" on:change="update(question.name, event)" />
+                {{ elseif question.type === 'freeform' }}
+                    <FreeformQuestion name="{{ question.name }}" caption="{{ question.caption }}" on:change="update(question.name, event)" />
+                {{ /if }}
+                </li>
+            {{ /each }}
+            </ul>
+
+            <div class="deluge-button-group">
+                <button on:click="toggle()">Cancel</button>
+                <button class="primary" on:click="submit()">Submit</button>
+            </div>
+        </div>
+    {{ /if }}
+
+    {{ #if state !== 'Initial' }}
+        <a class="deluge-fix-button jira-link jirafeedback" target="_blank" title="Report a problem with {{ pagename }} on Jira" on:click="showCollectorDialog()">Fix This Page</a>
+    {{ /if }}
+    </div>
+</div>
+
+<script>
+import BinaryQuestion from './BinaryQuestion.html';
+import FreeformQuestion from './FreeformQuestion.html';
+
+export default {
+    data: function () {
+        return {
+            project: '',
+            pagename: '',
+            state: 'Initial',
+            jiraurl: 'https://jira.mongodb.org/s/en_UScn8g8x/782/6/1.2.5/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector-embededjs/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector-embededjs.js?collectorId=298ba4e7',
+            questions: [],
+            answers: {},
+        }
+    },
+
+    computed: {
+        delugeClass: function(state) {
+            if (state === 'Initial') { return 'deluge' }
+            return 'deluge deluge-expanded'
+        },
+        delugeHeaderClass: function(state) {
+            if (state === 'Initial') { return 'deluge-header' }
+            return 'deluge-header deluge-header-expanded'
+        },
+        delugeBodyClass: function(state) {
+            if (state === 'Initial') { return 'deluge-body' }
+            return 'deluge-body deluge-body-expanded'
+        }
+    },
+
+    methods: {
+        toggle: function() {
+            this.set({answers: {}})
+
+            if (this.get('state') === 'Initial') {
+                this.set({'state': 'NotVoted'})
+            } else {
+                this.set({'state': 'Initial'})
+            }
+        },
+        submit: function() {
+            const vote = this.get('state')
+            if (typeof vote !== 'boolean') {
+                throw new Error('Assertion failed: Feedback submitted without vote')
+            }
+
+            const fields = new Map()
+            const answers = this.get('answers')
+            for (const question of Object.keys(answers)) {
+                const answer = answers[question]
+                if (answer !== null && answer !== undefined) {
+                    fields.set(question, answer)
+                }
+            }
+
+            this.set({state: 'Pending'})
+            this.fire('submit', {
+                vote, fields
+            })
+        },
+        rate: function(value) {
+            this.set({'state': value})
+        },
+        addQuestion: function(type, name, caption) {
+            this.set({questions: this.get('questions').concat({
+                type: type,
+                name: name,
+                caption: caption
+            })})
+
+            return this
+        },
+        update: function(questionName, answer) {
+            this.get('answers')[questionName] = answer
+        },
+        showCollectorDialog: function() {
+            window.ATL_JQ_PAGE_PROPS = {
+                triggerFunction: function(showFunc) {
+                    window.setTimeout(() => showFunc(), 1)
+                },
+                fieldValues: {'summary': `Comment on: "${this.get('project')}/${this.get('pagename')}"`}
+            }
+
+            jQuery.ajax({
+                'cache': true,
+                'dataType': 'script',
+                'type': 'get',
+                'url': this.get('jiraurl')
+            })
+        }
+    },
+
+    components: {
+        BinaryQuestion,
+        FreeformQuestion
+    }
+}
+</script>

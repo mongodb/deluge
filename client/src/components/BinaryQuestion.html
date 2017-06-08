@@ -1,0 +1,29 @@
+<div>{{{ caption }}}</div>
+<div>
+    <span class="switch fa fa-thumbs-up good {{ upvoteSelected }}" on:click="change(true)"></span>
+    <span class="switch fa fa-thumbs-down bad {{ downvoteSelected }}" on:click="change(false)"></span>
+</div>
+
+<script>
+export default {
+    data: function () {
+        return {
+            name: '',
+            caption: '',
+            answer: null,
+        }
+    },
+
+    methods: {
+        change: function(value) {
+            this.set({answer: value})
+            this.fire('change', value)
+        }
+    },
+
+    computed: {
+        upvoteSelected: (answer) => answer === true ? 'selected' : '',
+        downvoteSelected: (answer) => answer === false ? 'selected' : ''
+    }
+}
+</script>

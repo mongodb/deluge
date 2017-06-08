@@ -1,0 +1,19 @@
+<textarea placeholder="{{ caption }}" on:input="fire('change', answer)" bind:value="answer"></textarea>
+
+<script>
+export default {
+    data: function () {
+        return {
+            name: '',
+            caption: '',
+            answer: ''
+        }
+    },
+
+    methods: {
+        change: function() {
+            this.fire('change', this.get('answer'))
+        }
+    },
+}
+</script>

@@ -1,14 +1,26 @@
 {
   "author": "Andrew Aldridge",
-  "files": [ "../README.md", "src/lib.js" ],
+  "files": [
+    "../README.md",
+    "src/lib.js",
+    "src/components/MainWidget.html"
+  ],
   "main": "src/lib.js",
   "name": "rigning",
-  "repository": { "type": "git", "url": "git://github.com/mongodb/deluge.git" },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mongodb/deluge.git"
+  },
   "version": "2.1.0",
-
   "greniConfig": {
-    "entryPoints": {"index.js": "src/index.js"},
+    "entryPoints": {
+      "index.js": "src/index.js"
+    },
     "output": "build",
-    "buble": {}
+    "buble": {
+        "transforms": {
+            "dangerousForOf": true
+        }
+    }
   }
 }
