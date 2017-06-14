@@ -1,4 +1,4 @@
-import MainWidget from 'components/MainWidget.html';
+import MainWidget from './components/MainWidget.html';
 
 const FEEDBACK_URL = 'http://deluge.us-east-1.elasticbeanstalk.com/'
 
