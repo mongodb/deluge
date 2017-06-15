@@ -71,4 +71,8 @@ export class Deluge {
             img.src = url
         })
     }
+
+    open() {
+        this.app.open()
+    }
 }

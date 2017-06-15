@@ -81,6 +81,12 @@ export default {
     },
 
     methods: {
+        open: function() {
+            if (this.get('state') === 'Initial') {
+                this.set({answers: {}})
+                this.set({'state': 'NotVoted'})
+            }
+        },
         toggle: function() {
             this.set({answers: {}})
 
