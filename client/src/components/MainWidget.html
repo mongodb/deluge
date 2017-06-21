@@ -139,12 +139,10 @@ export default {
                 fieldValues: {'summary': `Comment on: "${this.get('project')}/${this.get('pagename')}"`}
             }
 
-            jQuery.ajax({
-                'cache': true,
-                'dataType': 'script',
-                'type': 'get',
-                'url': this.get('jiraurl')
-            })
+            const scriptElement = document.createElement('script')
+            scriptElement.type = 'application/javascript'
+            scriptElement.src = this.get('jiraurl')
+            document.body.appendChild(scriptElement)
         }
     },
 
