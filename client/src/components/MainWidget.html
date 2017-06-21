@@ -53,6 +53,13 @@
 import BinaryQuestion from './BinaryQuestion.html';
 import FreeformQuestion from './FreeformQuestion.html';
 
+function loadJira(jiraurl) {
+    const scriptElement = document.createElement('script')
+    scriptElement.type = 'application/javascript'
+    scriptElement.src = jiraurl
+    document.body.appendChild(scriptElement)
+}
+
 export default {
     data: function () {
         return {
@@ -139,10 +146,19 @@ export default {
                 fieldValues: {'summary': `Comment on: "${this.get('project')}/${this.get('pagename')}"`}
             }
 
-            const scriptElement = document.createElement('script')
-            scriptElement.type = 'application/javascript'
-            scriptElement.src = this.get('jiraurl')
-            document.body.appendChild(scriptElement)
+            if (!window.jQuery) {
+                const scriptElement = document.createElement('script')
+                scriptElement.type = 'application/javascript'
+                scriptElement.integrity = 'sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44='
+                scriptElement.setAttribute('crossorigin', 'anonymous')
+                scriptElement.src = 'https://code.jquery.com/jquery-2.2.4.min.js'
+                scriptElement.onload = () => {
+                    loadJira(this.get('jiraurl'))
+                }
+                document.body.appendChild(scriptElement)
+            } else {
+                loadJira(this.get('jiraurl'))
+            }
         }
     },
 

@@ -13,7 +13,7 @@
     "type": "git",
     "url": "git://github.com/mongodb/deluge.git"
   },
-  "version": "3.1.1",
+  "version": "3.1.8",
   "dependencies": {
     "svelte-cli": "^1.3.6"
   }
