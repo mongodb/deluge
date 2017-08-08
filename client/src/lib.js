@@ -39,6 +39,8 @@ export class Deluge {
         this.app.on('submit', event => {
             this.sendRating(event.vote, event.fields).then(() => {
                 this.app.set({state: 'Voted'})
+            }).catch((err) => {
+                console.error('Error submitting feedback')
             })
         })
     }
