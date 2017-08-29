@@ -43,7 +43,7 @@
         </div>
     {{ /if }}
 
-    {{ #if state !== 'Initial' }}
+    {{ #if state === false || state === 'Voted' }}
         <a class="deluge-fix-button jira-link jirafeedback" target="_blank" title="Report a problem with {{ pagename }} on Jira" on:click="showCollectorDialog()">Fix This Page</a>
     {{ /if }}
     </div>

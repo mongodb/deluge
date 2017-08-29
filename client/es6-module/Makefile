@@ -11,12 +11,9 @@ build: node_modules/.CURRENT
 	cp ../src/lib.js src/lib.js
 	sed -i '' -e "s/\.html';/\.js';/" ./src/components/*.js ./src/*.js
 
-node_modules/.CURRENT: package.json node_modules
-	npm update
-	touch node_modules/.CURRENT
-
-node_modules:
+node_modules/.CURRENT: package.json
 	npm install
+	touch node_modules/.CURRENT
 
 clean:
 	-rm -r src
