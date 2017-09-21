@@ -12,8 +12,12 @@
     </div>
 
     <div class="{{ delugeBodyClass }}">
-    {{ #if state === 'Voted' }}
+    {{ #if state === 'Voted-Up' || state === 'Voted-Down' }}
         <p>Thank you for your feedback!</p>
+    {{ /if }}
+
+    {{ #if state === 'Voted-Down' }}
+        <p>If this page contains an error, you may <a class="deluge-fix-button jira-link jirafeedback" target="_blank" title="Report a problem with {{ pagename }} on Jira" on:click="showCollectorDialog()">report the problem on Jira.</a></p>
     {{ elseif state == 'Pending '}}
         <p>Submitting feedback...</p>
     {{ elseif state === 'NotVoted' }}
@@ -41,10 +45,6 @@
                 <button class="primary" on:click="submit()">Submit</button>
             </div>
         </div>
-    {{ /if }}
-
-    {{ #if state === false || state === 'Voted' }}
-        <a class="deluge-fix-button jira-link jirafeedback" target="_blank" title="Report a problem with {{ pagename }} on Jira" on:click="showCollectorDialog()">Fix This Page</a>
     {{ /if }}
     </div>
 </div>

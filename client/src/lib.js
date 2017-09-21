@@ -17,20 +17,10 @@ export class Deluge {
         this.project = project
         this.path = path
 
-        this.storageKey = `feedback-${project}/${path}`
-        const val = localStorage[this.storageKey]
-        const ratedDate = val? Date.parse(val).valueOf() : -Infinity;
-
-        // Expire the last rating after 30 days
-        let state = 'Initial'
-        if((new Date()).valueOf() < (ratedDate + (1000 * 60 * 60 * 24 * 30))) {
-            state = 'Voted'
-        }
-
         this.app = new MainWidget({
             target: root,
             data: {
-                state: state,
+                state: 'Initial',
                 project: project,
                 pagename: path,
             }
@@ -38,7 +28,11 @@ export class Deluge {
 
         this.app.on('submit', event => {
             this.sendRating(event.vote, event.fields).then(() => {
-                this.app.set({state: 'Voted'})
+                if (event.vote) {
+                    this.app.set({state: 'Voted-Up'})
+                } else {
+                    this.app.set({state: 'Voted-Down'})
+                }
             }).catch((err) => {
                 console.error('Error submitting feedback')
             })
