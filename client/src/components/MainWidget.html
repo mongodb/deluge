@@ -21,8 +21,8 @@
     {{ elseif state == 'Pending '}}
         <p>Submitting feedback...</p>
     {{ elseif state === 'NotVoted' }}
-        <a on:click="rate(true)" class="deluge-vote-button">Yes</a>
-        <a on:click="rate(false)" class="deluge-vote-button">No</a>
+        <a id="rate-up" on:click="rate(true)" class="deluge-vote-button">Yes</a>
+        <a id="rate-down" on:click="rate(false)" class="deluge-vote-button">No</a>
     {{ elseif typeof state === 'boolean' }}
         <div class="deluge-questions">
             <ul ref>

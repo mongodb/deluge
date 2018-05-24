@@ -13,7 +13,7 @@
     "type": "git",
     "url": "git://github.com/mongodb/deluge.git"
   },
-  "version": "3.1.11",
+  "version": "3.1.12",
   "greniConfig": {
     "entryPoints": {
       "index.js": "src/index.js"
