@@ -109,12 +109,12 @@ export default {
                 throw new Error('Assertion failed: Feedback submitted without vote')
             }
 
-            const fields = new Map()
+            const fields = {}
             const answers = this.get('answers')
             for (const question of Object.keys(answers)) {
                 const answer = answers[question]
                 if (answer !== null && answer !== undefined) {
-                    fields.set(question, answer)
+                    fields[question] = answer
                 }
             }
 
