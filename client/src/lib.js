@@ -2,12 +2,13 @@ import MainWidget from './components/MainWidget.html';
 
 const FEEDBACK_URL = 'http://deluge.us-east-1.elasticbeanstalk.com/'
 
-function addQueryParameters(url/*: string*/, parameters/*: Map<string, string|boolean>*/)/*: string*/ {
+function addQueryParameters(url/*: string*/, parameters)/*: string*/ {
     const queryComponents = []
 
-    parameters.forEach((value, key) => {
+    for (const key of Object.keys(parameters)) {
+        const value = parameters[key]
         queryComponents.push(`${encodeURIComponent(key)}=${encodeURIComponent(JSON.stringify(value))}`)
-    })
+    }
 
     return url + '?' + queryComponents.join('&')
 }
@@ -49,10 +50,24 @@ export class Deluge {
         return this
     }
 
-    sendRating(vote/*: boolean*/, fields/*: Map<string, string|boolean>*/)/*: Promise<void>*/ {
+    sendRating(vote/*: boolean*/, fields)/*: Promise<void>*/ {
+        const path = `${this.project}/${this.path}`
+
+        // Report to Segment
+        const analyticsData = {'useful': vote}
+        for (const fieldName of Object.keys(fields)) {
+            analyticsData[fieldName] = fields[fieldName]
+        }
+        try {
+            window.analytics.track('Feedback Submitted', analyticsData)
+        } catch (err) {
+            console.error(err)
+        }
+
+        // Report to Deluge
         return new Promise((resolve, reject) => {
-            fields.set('v', vote)
-            fields.set('p', `${this.project}/${this.path}`)
+            fields.v = vote
+            fields.p = path
             const url = addQueryParameters(FEEDBACK_URL, fields)
 
             // Report this rating using an image GET to work around the
