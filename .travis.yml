@@ -3,7 +3,8 @@ language: python
 python:
   - "3.4"
 install:
-  - pip install -U -r server/requirements.txt mypy-lang pep8
-script: make -C server lint
+  - python3 -m pip install pipenv
+  - pipenv install --dev
+script: make lint
 notifications:
     email: false

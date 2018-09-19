@@ -1,12 +1,15 @@
 .PHONY: lint clean
 
 build/deluge.zip: application.py requirements.txt .ebextensions/*
-	rm $@ || true
+	-rm $@
 	zip -r $@ .ebextensions application.py requirements.txt
 
+requirements.txt: Pipfile.lock
+	pipenv lock --requirements > requirements.txt
+
 lint:
-	pep8 --max-line-length=100 ./application.py
-	MYPYPATH=stubs mypy --check-untyped-defs --strict-optional ./application.py
+	pipenv run flake8 --max-line-length=100 .
+	pipenv run mypy ./application.py
 
 clean:
-	rm -f build/deluge.zip
+	-rm -f build/deluge.zip requirements.txt

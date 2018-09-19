@@ -1,3 +1,4 @@
-pymongo==3.4.0
-typing==3.6.2
-Werkzeug==0.12.2
+-i https://pypi.org/simple
+pymongo==3.7.1
+typing==3.6.6
+werkzeug==0.14.1

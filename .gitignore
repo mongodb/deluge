@@ -88,5 +88,6 @@ ENV/
 # Rope project settings
 .ropeproject
 
+requirements.txt
 build/
-node_modules/
+.mypy_cache/

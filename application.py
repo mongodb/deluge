@@ -128,6 +128,7 @@ class Deluge:
         logger.info('Connecting to %s', mongodb_host)
         return cls(mongodb_host).application
 
+
 application = Deluge.run()
 
 if __name__ == '__main__':
