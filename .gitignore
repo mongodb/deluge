@@ -91,3 +91,4 @@ ENV/
 requirements.txt
 build/
 .mypy_cache/
+.pytest_cache/
