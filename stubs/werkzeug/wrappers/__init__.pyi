@@ -1,4 +1,4 @@
-from typing import Any, Union
+from typing import Callable, Sequence, Union
 from werkzeug.exceptions import HTTPException
 
 
@@ -12,8 +12,12 @@ class Request:
     @property
     def query_string(self) -> bytes: ...
 
+    @property
+    def access_route(self) -> Sequence[str]: ...
+
     @staticmethod
-    def application(f: Any): ...
+    def application(f: Callable) -> Callable: ...
+
 
 class Response:
     def __init__(self, response: Union[str, bytes], content_type: str='') -> None: ...
