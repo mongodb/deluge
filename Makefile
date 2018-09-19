@@ -1,18 +1,12 @@
-.PHONY: all lint build/deluge.zip build/bundle.min.js clean
+.PHONY: lint clean
 
-all: build/deluge.zip build/bundle.min.js
+build/deluge.zip: application.py requirements.txt .ebextensions/*
+	rm $@ || true
+	zip -r $@ .ebextensions application.py requirements.txt
 
 lint:
-	$(MAKE) -C server/ lint
-	$(MAKE) -C client/ lint
-
-build/deluge.zip:
-	$(MAKE) -C server/ ../build/deluge.zip
-
-build/bundle.min.js:
-	$(MAKE) -C client/ ../build/bundle.min.js
+	pep8 --max-line-length=100 ./application.py
+	MYPYPATH=stubs mypy --check-untyped-defs --strict-optional ./application.py
 
 clean:
-	$(MAKE) -C server/ clean
-	$(MAKE) -C client/ clean
-
+	rm -f build/deluge.zip
