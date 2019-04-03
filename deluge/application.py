@@ -30,7 +30,8 @@ class Vote:
                  page: str,
                  useful: bool,
                  fields: Dict[str, FieldValueType],
-                 ip: Optional[str]) -> None:
+                 ip: Optional[str],
+                 vote_id: Optional[str]) -> None:
         self.page = page
         self.useful = useful
         self.fields = fields
@@ -39,6 +40,13 @@ class Vote:
         if ip is not None:
             try:
                 self.ip = anonymize_ip(ip)
+            except ValueError:
+                pass
+
+        self.vote_id = None
+        if vote_id is not None:
+            try:
+                self.vote_id = vote_id
             except ValueError:
                 pass
 
@@ -51,6 +59,7 @@ class Vote:
 
             page = parameters['p']
             useful = parameters['v']
+            vote_id = parameters['vId']
 
             if not isinstance(page, str):
                 raise TypeError('Invalid page type')
@@ -58,10 +67,14 @@ class Vote:
             if not isinstance(useful, bool):
                 raise TypeError('Invalid useful type')
 
+            if not isinstance(vote_id, str):
+                raise TypeError('Invalid voteId type')
+
             del parameters['p']
             del parameters['v']
+            del parameters['vId']
 
-            return cls(page[:cls.MAX_PAGE_LEN], useful, parameters, ip)
+            return cls(page[:cls.MAX_PAGE_LEN], useful, parameters, ip, vote_id)
         except (KeyError, ValueError, TypeError) as err:
             logger.exception('Invalid vote request')
             raise ValueError('Invalid vote request') from err
@@ -96,16 +109,36 @@ class Connection:
 
         self.votes = self.db['votes']
         self.votes.create_index('page')
+        self.votes.create_index('voteId')
+
+        try:
+            self.db.create_collection('votesInitial', capped=True, size=votesSizeBytes)
+        except pymongo.errors.CollectionInvalid:
+            pass
+
+        self.votes_initial = self.db['votesInitial']
+        self.votes_initial.create_index('page')
+        self.votes.create_index('voteId')
 
     def vote(self, vote: Vote) -> None:
         """Record a vote for the given page path."""
         doc = {'page': vote.page,
                'useful': vote.useful,
                'ip': vote.ip,
-               'date': datetime.datetime.utcnow()}
+               'date': datetime.datetime.utcnow(),
+               'voteId': vote.vote_id}
         for key, value in vote.fields.items():
             doc['q-{}'.format(key)] = value
         self.votes.save(doc)
+
+    def vote_initial(self, vote: Vote) -> None:
+        """Record an initial vote of yes or no for the given page path."""
+        doc = {'page': vote.page,
+               'useful': vote.useful,
+               'ip': vote.ip,
+               'date': datetime.datetime.utcnow(),
+               'voteId': vote.vote_id}
+        self.votes_initial.save(doc)
 
 
 class Deluge:
@@ -121,6 +154,15 @@ class Deluge:
 
         if request.path == '/health':
             return Response('')
+
+        if request.path == '/initial_vote':
+            try:
+                vote = Vote.parse(request)
+            except ValueError:
+                return BadRequest()
+
+            self.connection.vote_initial(vote)
+            return Response(EMPTY_BMP, content_type='image/bmp')
 
         try:
             vote = Vote.parse(request)
