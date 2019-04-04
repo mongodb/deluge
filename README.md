@@ -7,7 +7,7 @@ A simple web feedback server.
 
 ## Local Development
 
-Install local develop and default packages:
+Install all development dependencies:
 ```shell
 pipenv install --dev
 ```
